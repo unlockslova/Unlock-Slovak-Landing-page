@@ -124,7 +124,7 @@
   .about{background:var(--paper)}
   .about .wrap{display:grid;grid-template-columns:.85fr 1.15fr;gap:48px;align-items:start}
   @media(max-width:760px){.about .wrap{grid-template-columns:1fr;gap:30px;display:flex;flex-direction:column}}
-  @media(max-width:760px){.about .wrap .photo-frame{order:-1;max-height:340px;aspect-ratio:4/3}}
+  @media(max-width:760px){.about .wrap .photo-frame{order:-1;max-height:340px;aspect-ratio:4/3;position:static;top:auto}}
   .photo-frame{position:relative;border-radius:18px;overflow:hidden;aspect-ratio:4/5;background:var(--green-soft);border:1px solid var(--indigo-line);display:flex;align-items:center;justify-content:center;text-align:center;position:sticky;top:90px}
   .photo-frame img{width:100%;height:100%;object-fit:cover;display:block}
   .photo-frame .ph{padding:24px;color:var(--indigo);opacity:.6;font-family:var(--display);font-weight:600;font-size:.9rem;line-height:1.4}
@@ -747,27 +747,48 @@
     <div class="wrap">
       <div class="kit-signup-row">
         <div class="kit-card">
-          <h3>Send me the Survival Kit 🎁</h3>
-          <p>Pop in your email and it lands straight in your inbox, free.</p>
-        <!--
-          ============================================================
-          CONNECT THIS FORM TO MAILERLITE (free) TO COLLECT EMAILS:
-          1. Create a free account at mailerlite.com
-          2. Build a form/automation that emails the Survival Kit PDF on signup
-          3. Either: replace action="#" below with your MailerLite form action URL,
-             OR replace this whole .kit-form block with MailerLite's embed code.
-          Until connected, the form won't store emails yet.
-          ============================================================
-        -->
-        <form class="kit-form" action="#" method="post">
-          <input type="email" name="email" placeholder="your@email.com" required aria-label="Your email address">
-          <button type="submit" class="btn btn-primary">Send me the free kit</button>
-        </form>
-        <p class="privacy">No spam, ever. Unsubscribe anytime.</p>
+          <div id="kitFormWrap">
+            <h3>Send me the Survival Kit 🎁</h3>
+            <p>Pop in your email and it lands straight in your inbox, free.</p>
+            <form class="kit-form" id="kitMlForm" action="https://assets.mailerlite.com/jsonp/2428635/forms/191716268568479688/subscribe" method="post" target="ml_kit_iframe">
+              <input type="email" name="fields[email]" placeholder="your@email.com" required aria-label="Your email address">
+              <input type="hidden" name="ml-submit" value="1">
+              <button type="submit" class="btn btn-primary" id="kitSubmitBtn">Send me the free kit</button>
+            </form>
+            <p class="privacy">No spam, ever. Unsubscribe anytime.</p>
+          </div>
+          <div id="kitFormSuccess" style="display:none;text-align:center;padding:10px 0">
+            <div style="font-size:2.2rem;line-height:1">🔓</div>
+            <h3 style="margin:.4em 0 .3em">Unlocked!</h3>
+            <p style="margin:0">Check your inbox, your Slovak Survival Kit is on its way.</p>
+          </div>
+          <!-- hidden iframe target so the page never navigates away on submit -->
+          <iframe name="ml_kit_iframe" id="ml_kit_iframe" style="display:none" title="form submission target"></iframe>
+        </div>
       </div>
     </div>
   </section>
 
+  <script>
+    (function(){
+      var form = document.getElementById('kitMlForm');
+      var wrap = document.getElementById('kitFormWrap');
+      var success = document.getElementById('kitFormSuccess');
+      var iframe = document.getElementById('ml_kit_iframe');
+      if(!form) return;
+      var submitted = false;
+      form.addEventListener('submit', function(){
+        submitted = true;
+      });
+      iframe.addEventListener('load', function(){
+        if(submitted){
+          wrap.style.display = 'none';
+          success.style.display = 'block';
+          submitted = false;
+        }
+      });
+    })();
+  </script>
 
   <section class="faq" id="faq" style="background:var(--paper)">
     <div class="wrap">
